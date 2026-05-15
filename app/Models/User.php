@@ -29,4 +29,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function documents()
+    {
+    return $this->hasMany(Document::class);
+    }
+
+    protected $fillable = ['title', 'slug', 'content', 'user_id'];
 }
