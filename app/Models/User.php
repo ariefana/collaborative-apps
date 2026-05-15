@@ -34,6 +34,4 @@ class User extends Authenticatable
     {
     return $this->hasMany(Document::class);
     }
-
-    protected $fillable = ['title', 'slug', 'content', 'user_id'];
 }

@@ -6,6 +6,7 @@ use App\Models\Document;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentController extends Controller
 {
@@ -13,7 +14,7 @@ class DocumentController extends Controller
     public function index()
     {
         return Inertia::render('Dashboard',[
-            'documents' => auth()->user()->documents()->latest()->get()
+            'documents' => Auth::user()->documents()->latest()->get()
         ]);
     }
 
@@ -22,7 +23,7 @@ class DocumentController extends Controller
     {
         $request->validate(['title' => 'required|string|max:255']);
 
-        $document = auth()->user()->documents()->create([
+        $document = Auth::user()->documents()->create([
             'title' => $request->title,
             'slug'  => Str::slug($request->title) . '-' . Str::random(5),
             'content' => '', // awal nya kosong
