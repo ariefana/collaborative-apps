@@ -39,4 +39,20 @@ class DocumentController extends Controller
             'document' => $document
         ]);
     }
+
+    public function update(Request $request, Document $document)
+{
+    // Validasi sederhana
+    $document->update([
+        'content' => $request->content
+    ]);
+
+    // OPSI: Simpan juga ke tabel revisions untuk fitur Version History
+    $document->revisions()->create([
+        'user_id' => Auth::id(),
+        'content' => $request->content,
+    ]);
+
+    return response()->json(['message' => 'Tersimpan otomatis']);
+}
 }
