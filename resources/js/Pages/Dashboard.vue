@@ -1,30 +1,31 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
+
+const props = defineProps({ documents: Array });
+
+const form = useForm({
+    title: '',
+});
+
+const createDocument = () => {
+    form.post(route('documents.store'), {
+        onSuccess: () => form.reset(),
+    });
+};
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <div class="p-6">
+        <form @submit.prevent="createDocument" class="mb-6">
+            <input v-model="form.title" type="text" placeholder="Judul Dokumen Baru" class="rounded border-gray-300" required>
+            <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded">Buat</button>
+        </form>
 
-    <AuthenticatedLayout>
-        <template #header>
-            <h2
-                class="text-xl font-semibold leading-tight text-gray-800"
-            >
-                Dashboard
-            </h2>
-        </template>
-
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div
-                    class="overflow-hidden bg-white shadow-sm sm:rounded-lg"
-                >
-                    <div class="p-6 text-gray-900">
-                        You're logged in!
-                    </div>
-                </div>
-            </div>
+        <div v-for="doc in documents" :key="doc.id" class="p-4 border-b">
+            <a :href="route('documents.show', doc.slug)" class="text-blue-500 font-bold">
+                {{ doc.title }}
+            </a>
+            <p class="text-sm text-gray-500">Dibuat pada: {{ doc.created_at }}</p>
         </div>
-    </AuthenticatedLayout>
+    </div>
 </template>
