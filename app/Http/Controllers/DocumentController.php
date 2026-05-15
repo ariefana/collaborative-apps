@@ -14,7 +14,7 @@ class DocumentController extends Controller
     public function index()
     {
         return Inertia::render('Dashboard',[
-            'documents' => Auth::user()->documents()->latest()->get()
+            'documents' => Document::with('user')->latest()->get()
         ]);
     }
 

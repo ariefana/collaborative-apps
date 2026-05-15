@@ -18,11 +18,10 @@ const editor = useEditor({
         const content = editor.getHTML();
         
         // 1. Broadcast ketikan ke user lain via Laravel Echo (Reverb)
-        window.Echo.join(`document.${props.document.id}`)
-            .whisper('typing', {
-                content: content,
-                userId: props.document.user_id // ID kita
-            });
+            window.Echo?.join(`document.${props.document.id}`)
+                .whisper('typing', {
+                    content: content,
+                });
             
         // 2. TODO: Simpan ke database (Debounce) bisa ditambahkan di sini nanti
     },
@@ -30,7 +29,8 @@ const editor = useEditor({
 
 onMounted(() => {
     // Bergabung ke Presence Channel Reverb
-    window.Echo.join(`document.${props.document.id}`)
+    if (window.Echo){
+        window.Echo.join(`document.${props.document.id}`)
         .here((users) => {
             activeUsers.value = users; // Siapa saja yang sedang buka dokumen ini?
         })
@@ -53,6 +53,10 @@ onMounted(() => {
                 editor.value.commands.setTextSelection({ from, to });
             }
         });
+    } else {
+        console.error("Laravel Echo gagal dimuat. Periksa konfigurasi WebSocket Anda.");
+        
+    }
 });
 
 onBeforeUnmount(() => {

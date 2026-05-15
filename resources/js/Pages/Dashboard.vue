@@ -25,7 +25,9 @@ const createDocument = () => {
             <a :href="route('documents.show', doc.slug)" class="text-blue-500 font-bold">
                 {{ doc.title }}
             </a>
-            <p class="text-sm text-gray-500">Dibuat pada: {{ doc.created_at }}</p>
+            <p class="text-sm text-gray-500">
+                Pemilik: {{ doc.user.name }} | Dibuat: {{ new Date(doc.created_at).toLocaleDateString() }}
+            </p>
         </div>
     </div>
 </template>
