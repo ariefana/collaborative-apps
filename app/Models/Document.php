@@ -12,4 +12,9 @@ class Document extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function revisions()
+    {
+    return $this->hasMany(DocumentRevision::class);
+    }
 }

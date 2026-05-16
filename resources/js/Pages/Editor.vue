@@ -5,19 +5,19 @@ import StarterKit from '@tiptap/starter-kit';
 import { router } from '@inertiajs/vue3';
 
 
-// const showHistory = ref(false);
+const showHistory = ref(false);
 
-// const restoreVersion = (revisionId) => {
-//     if (confirm('Apakah Anda yakin ingin mengembalikan ke versi ini? Konten saat ini akan diganti.')) {
-//         router.post(route('documents.restore', [props.document.slug, revisionId]), {}, {
-//             onSuccess: () => {
-//                 // Update isi editor secara manual setelah restore
-//                 editor.value.commands.setContent(props.document.content);
-//                 showHistory.value = false;
-//             }
-//         });
-//     }
-// };
+const restoreVersion = (revisionId) => {
+    if (confirm('Apakah Anda yakin ingin mengembalikan ke versi ini? Konten saat ini akan diganti.')) {
+        router.post(route('documents.restore', [props.document.slug, revisionId]), {}, {
+            onSuccess: () => {
+                // Update isi editor secara manual setelah restore
+                editor.value.commands.setContent(props.document.content);
+                showHistory.value = false;
+            }
+        });
+    }
+};
 
 const props = defineProps({
     document: Object,
@@ -100,29 +100,59 @@ onBeforeUnmount(() => {
     }
     window.Echo.leave(`document.${props.document.id}`);
 });
+
+const deleteAllHistory = () => {
+    if (confirm('Apakah Anda yakin ingin menghapus SEMUA riwayat versi? Tindakan ini tidak dapat dibatalkan.')) {
+        router.delete(route('documents.history.destroy', props.document.slug), {
+            onSuccess: () => {
+                alert('Semua riwayat versi telah dibersihkan.');
+            }
+        });
+    }
+}
 </script>
 
 <template>
-    <div class="max-w-4xl mx-auto py-10 px-4">
-        <div class="mb-4 flex justify-between items-center border-b pb-4">
-            <h1 class="text-2xl font-bold">{{ document.title }}</h1>
-            <p v-if="isTyping" class="text-xs text-blue-500 animate-pulse">
-                Seseorang sedang mengetik...
-            </p>
-            <div class="flex items-center space-x-2">
-                <span class="text-sm text-gray-500">Online:</span>
-                <div class="flex -space-x-2">
-                    <div v-for="user in activeUsers" :key="user.id" 
-                        class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs border-2 border-white"
-                        :title="user.name">
-                        {{ user.name.charAt(0) }}
-                    </div>
-                </div>
+    <div class="max-w-6xl mx-auto py-10 px-4 flex gap-6">
+        <div class="flex-1">
+            <div class="flex justify-between mb-4">
+                <h1 class="text-2xl font-bold">{{ document.title }}</h1>
+                <p v-if="isTyping" class="text-xs text-blue-500 animate-pulse">
+                    Seseorang sedang mengetik...
+                </p>
+                <button @click="showHistory = !showHistory" class="text-sm bg-gray-200 px-3 py-1 rounded">
+                    {{ showHistory ? 'Tutup History' : 'Lihat History' }}
+                </button>
+            </div>
+            
+            <div class="prose max-w-none border p-6 min-h-[500px] bg-white rounded-lg">
+                <editor-content :editor="editor" />
             </div>
         </div>
 
-        <div class="prose max-w-none border p-6 min-h-[500px] rounded-lg shadow-sm bg-white focus:outline-none">
-            <editor-content :editor="editor" />
+        <div v-if="showHistory" class="w-64 border-l pl-4 bg-gray-50 p-4 rounded-lg">
+            <h2 class="font-bold mb-4">Riwayat Versi</h2>
+
+            <button 
+            v-if="document.revisions && document.revisions.length > 0"
+            @click="deleteAllHistory" 
+            class="text-[10px] bg-red-100 hover:bg-red-200 text-red-600 px-2 py-1 rounded font-semibold transition mb-3"> 
+                Hapus Semua
+            </button>
+
+            <div v-if="!document.revisions || document.revisions.length === 0" class="text-sm text-gray-500 italic">
+                Belum ada riwayat perubahan.
+            </div>
+
+            <div class="space-y-4 overflow-y-auto max-h-[500px]">
+                <div v-for="rev in document.revisions" :key="rev.id" class="p-2 border rounded bg-white text-xs">
+                    <p class="font-semibold text-blue-600">{{ rev.user.name }}</p>
+                    <p class="text-gray-500">{{ new Date(rev.created_at).toLocaleString() }}</p>
+                    <button @click="restoreVersion(rev.id)" class="mt-2 text-blue-500 underline">
+                        Restore Versi Ini
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>

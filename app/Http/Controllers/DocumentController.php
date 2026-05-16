@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Document;
+use App\Models\DocumentRevision;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
@@ -36,7 +37,10 @@ class DocumentController extends Controller
     public function show(Document $document)
     {
         return Inertia::render('Editor', [
-            'document' => $document
+            'document' => $document->load(['revisions.user' => function($query) {
+                $query->latest();
+            }
+            ])
         ]);
     }
 
@@ -47,12 +51,33 @@ class DocumentController extends Controller
         'content' => $request->content
     ]);
 
-    // OPSI: Simpan juga ke tabel revisions untuk fitur Version History
-    $document->revisions()->create([
-        'user_id' => Auth::id(),
-        'content' => $request->content,
-    ]);
+    // Simpan ke history jika konten tidak kosong
+    if ($request->content) {
+        $document->revisions()->create([
+            'user_id'   => Auth::id(),
+            'content'   => $request->content
+        ]);
+    }
 
-    return response()->json(['message' => 'Tersimpan otomatis']);
+    return response()->json([
+        'message'   => 'Tersimpan'
+    ]);
 }
+
+    public function restore(Document $document, DocumentRevision $revision) 
+    {
+        $document->update([
+            'content'   => $revision->content
+        ]);
+
+        return redirect()->back()->with('message', 'Versi berhasil dipulihkan');
+    }
+
+    public function deleteAllHistory(Document $document)
+    {
+    // Hapus semua data di tabel document_revisions yang terhubung dengan id dokumen ini
+    $document->revisions()->delete();
+
+    return redirect()->back()->with('message', 'Semua riwayat versi berhasil dihapus');
+    }
 }

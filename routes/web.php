@@ -31,4 +31,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/documents/{document:slug}', [DocumentController::class, 'show'])->name('documents.show');
 });
 
+// Route untuk menyimpan auto-save
+Route::put('/documents/{document:slug}', [DocumentController::class, 'update'])->name('documents.update');
+// Route untuk mengembalikan (restore) versi history
+Route::post('/documents/{document:slug}/restore/{revision}', [DocumentController::class, 'restore'])->name('documents.restore');
+
+// Tambahkan baris ini di bawah route restore yang kemarin
+Route::delete('/documents/{document:slug}/history', [DocumentController::class, 'deleteAllHistory'])->name('documents.history.destroy');
+
 require __DIR__.'/auth.php';
