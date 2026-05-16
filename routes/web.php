@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DocumentController::class, 'index'])->name('dashboard');
     Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
     Route::get('/documents/{document:slug}', [DocumentController::class, 'show'])->name('documents.show');
+    Route::match(['post', 'delete'], '/documents/{document:slug}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 });
 
 // Route untuk menyimpan auto-save

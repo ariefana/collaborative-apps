@@ -45,7 +45,7 @@ class DocumentController extends Controller
     }
 
     public function update(Request $request, Document $document)
-{
+    {
     // Validasi sederhana
     $document->update([
         'content' => $request->content
@@ -62,7 +62,7 @@ class DocumentController extends Controller
     return response()->json([
         'message'   => 'Tersimpan'
     ]);
-}
+    }
 
     public function restore(Document $document, DocumentRevision $revision) 
     {
@@ -79,5 +79,17 @@ class DocumentController extends Controller
     $document->revisions()->delete();
 
     return redirect()->back()->with('message', 'Semua riwayat versi berhasil dihapus');
+    }
+
+    public function destroy(Document $document)
+    {
+        // validasi keamana
+        if ($document->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menghapus dokumen ini.');
+        }
+
+        $document->delete(Auth::id());
+
+        return redirect()->back()->with('message', 'Dokumen berhasil dihapus.');
     }
 }
