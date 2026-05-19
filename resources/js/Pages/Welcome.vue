@@ -41,7 +41,7 @@ defineProps({
             </h1>
             
             <p class="text-base text-gray-500 max-w-xl mx-auto mb-8 leading-relaxed">
-                Aplikasi pengerjaan dokumen bersama secara real-time untuk memenuhi tugas kelompok. Masuk dengan akun Anda atau buat akun baru untuk mulai menulis bersama tim.
+                Aplikasi pengerjaan dokumen bersama secara real-time untuk memenuhi tugas. Masuk dengan akun Anda atau buat akun baru untuk mulai menulis bersama tim.
             </p>
 
             <div class="flex justify-center items-center gap-3">
@@ -69,7 +69,7 @@ defineProps({
         </main>
 
         <footer class="w-full text-center py-6 border-t border-gray-100 text-xs text-gray-400">
-            Proyek Tugas Kelompok &bull; Built with Laravel & Vue
+            Proyek Tugas Individu &bull; Built with Laravel & Vue
         </footer>
 
     </div>
