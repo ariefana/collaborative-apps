@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\DocumentController;
+use App\Models\Document;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -12,6 +13,7 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'totalDocuments' => Document::count(),
     ]);
 });
 
