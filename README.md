@@ -27,7 +27,7 @@ ColabDoc adalah aplikasi editor dokumen kolaboratif mirip Google Docs yang diran
 
 ```bash
 git clone https://github.com/ariefana/collaborative-apps.git
-cd tugas-crud-laravel12-arief
+cd collaborative-apps
 ```
 
 ### 2. Install Dependency
